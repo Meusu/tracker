@@ -108,7 +108,7 @@ class Tracking
         @startForegroundTracker name
         $("#start").removeClass("btn-success").addClass("btn-danger").text "Stop Tracking"
       else
-        $.post @clearUrl
+        $.post @clearUrl, {name: @name}, null, "json"
         @stopForegroundTracker()
         $("#position").text "Waiting for position.."
         $("#start").removeClass("btn-danger").addClass("btn-success").text "Start Tracking"
