@@ -6,10 +6,10 @@
         id        = "com.secondlinenola.tracker"
         version   = "1.0.0">
 
-    <name>Second Line Tracker</name>
+    <name>Meusu Tracker</name>
 
     <description>
-      Tracker app for Second Line NOLA
+      Tracker app for Meusu
     </description>
 
     <author href="http://www.meusu.com/" email="support@meusu.com">
