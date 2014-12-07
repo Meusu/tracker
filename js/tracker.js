@@ -3,7 +3,7 @@
   var Map, Tracking, Ui, serverHost, serverPort,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  serverHost = "http://secondline-server.herokuapp.com";
+  serverHost = "http://meusu-tracker.herokuapp.com";
 
   serverPort = 80;
 
@@ -124,7 +124,8 @@
       return window.navigator.geolocation.getCurrentPosition(this.onPosition, this.onFailure);
     };
 
-    Tracking.prototype.startForegroundTracker = function() {
+    Tracking.prototype.startForegroundTracker = function(name) {
+      this.name = name;
       this.getCurrentPosition();
       return this.foregroundTracker = setInterval(this.getCurrentPosition, this.pollingInterval);
     };
@@ -139,8 +140,10 @@
       var _this = this;
       $("#start").removeAttr("disabled");
       return $("#start").click(function() {
+        var name;
+        name = $("#name").val();
         if ($("#start").hasClass("btn-success")) {
-          _this.startForegroundTracker();
+          _this.startForegroundTracker(name);
           return $("#start").removeClass("btn-success").addClass("btn-danger").text("Stop Tracking");
         } else {
           $.post(_this.clearUrl);
@@ -162,6 +165,7 @@
       }
       position = position.coords || position;
       $.post(this.reportUrl, {
+        name: this.name,
         location: position
       }, null, "json");
       return this.bgGeo.finish();
