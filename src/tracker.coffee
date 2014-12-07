@@ -1,4 +1,4 @@
-serverHost = "http://secondline-server.herokuapp.com"
+serverHost = "http://meusu-tracker.herokuapp.com"
 serverPort = 80
 #serverHost = "http://localhost"
 #serverPort = 5000
@@ -92,7 +92,7 @@ class Tracking
   getCurrentPosition: =>
     window.navigator.geolocation.getCurrentPosition @onPosition, @onFailure
 
-  startForegroundTracker: ->
+  startForegroundTracker: (@name) ->
     @getCurrentPosition()
     @foregroundTracker = setInterval @getCurrentPosition, @pollingInterval
 
@@ -103,8 +103,9 @@ class Tracking
     $("#start").removeAttr "disabled"
 
     $("#start").click =>
+      name = $("#name").val()
       if $("#start").hasClass "btn-success"
-        @startForegroundTracker()
+        @startForegroundTracker name
         $("#start").removeClass("btn-success").addClass("btn-danger").text "Stop Tracking"
       else
         $.post @clearUrl
@@ -120,7 +121,7 @@ class Tracking
     return if $("#start").hasClass "btn-success"
 
     position = position.coords || position
-    $.post @reportUrl, {location: position}, null, "json"
+    $.post @reportUrl, {name: @name, location: position}, null, "json"
     @bgGeo.finish()
 
   onFailure: (error) =>
