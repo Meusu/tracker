@@ -146,7 +146,9 @@
           _this.startForegroundTracker(name);
           return $("#start").removeClass("btn-success").addClass("btn-danger").text("Stop Tracking");
         } else {
-          $.post(_this.clearUrl);
+          $.post(_this.clearUrl, {
+            name: _this.name
+          }, null, "json");
           _this.stopForegroundTracker();
           $("#position").text("Waiting for position..");
           return $("#start").removeClass("btn-danger").addClass("btn-success").text("Start Tracking");
