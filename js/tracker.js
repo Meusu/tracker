@@ -144,12 +144,14 @@
         name = $("#name").val();
         if ($("#start").hasClass("btn-success")) {
           _this.startForegroundTracker(name);
+          $("#name").prop("disabled", true);
           return $("#start").removeClass("btn-success").addClass("btn-danger").text("Stop Tracking");
         } else {
           $.post(_this.clearUrl, {
             name: _this.name
           }, null, "json");
           _this.stopForegroundTracker();
+          $("#name").prop("disabled", false);
           $("#position").text("Waiting for position..");
           return $("#start").removeClass("btn-danger").addClass("btn-success").text("Start Tracking");
         }

@@ -106,10 +106,12 @@ class Tracking
       name = $("#name").val()
       if $("#start").hasClass "btn-success"
         @startForegroundTracker name
+        $("#name").prop "disabled", true
         $("#start").removeClass("btn-success").addClass("btn-danger").text "Stop Tracking"
       else
         $.post @clearUrl, {name: @name}, null, "json"
         @stopForegroundTracker()
+        $("#name").prop "disabled", false
         $("#position").text "Waiting for position.."
         $("#start").removeClass("btn-danger").addClass("btn-success").text "Start Tracking"
 
