@@ -52,6 +52,7 @@ class Ui
     $("#position").text "Waiting for position.."
 
   onPosition: (position, name) =>
+    $("#position").text "DEBUG. Got #{@name}, #{name}, #{position}"
     return unless name == @name
 
     $("#position").html """

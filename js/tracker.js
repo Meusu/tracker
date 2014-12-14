@@ -70,6 +70,7 @@
     };
 
     Ui.prototype.onPosition = function(position, name) {
+      $("#position").text("DEBUG. Got " + this.name + ", " + name + ", " + position);
       if (name !== this.name) {
         return;
       }
