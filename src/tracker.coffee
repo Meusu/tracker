@@ -43,8 +43,7 @@ class Ui
   start: ->
     @map = new Map
     @socket = io.connect serverHost,
-      transports: ["xhr-polling"]
-      port:       serverPort
+      port: serverPort
 
     @socket.on "position", @onPosition
     @socket.on "clear", @onClear
@@ -85,6 +84,7 @@ class Tracking
 
     @bgGeo.configure @onPosition, @onFailure,
       url:              @reportUrl
+      params:           { name: @name }
       desiredAccuracy:  0
       stationaryRadius: 20
       distanceFilter:   30
@@ -92,7 +92,7 @@ class Tracking
   getCurrentPosition: =>
     window.navigator.geolocation.getCurrentPosition @onPosition, @onFailure
 
-  startForegroundTracker: (@name) ->
+  startForegroundTracker: ->
     @getCurrentPosition()
     @foregroundTracker = setInterval @getCurrentPosition, @pollingInterval
 
@@ -103,20 +103,19 @@ class Tracking
     $("#start").removeAttr "disabled"
 
     $("#start").click =>
-      name = $("#name").val()
+      @name = $("#name").val()
+      @configure()
       if $("#start").hasClass "btn-success"
-        @startForegroundTracker name
+        @startForegroundTracker()
         $("#name").prop "disabled", true
         $("#start").removeClass("btn-success").addClass("btn-danger").text "Stop Tracking"
       else
         $.post @clearUrl, {name: @name}, null, "json"
         @stopForegroundTracker()
-        $("#name").prop "disabled", false
         $("#position").text "Waiting for position.."
         $("#start").removeClass("btn-danger").addClass("btn-success").text "Start Tracking"
 
   start: ->
-    @configure()
     @setupUi()
 
   onPosition: (position) =>
