@@ -61,7 +61,6 @@
     Ui.prototype.start = function() {
       this.map = new Map;
       this.socket = io.connect(serverHost, {
-        transports: ["xhr-polling"],
         port: serverPort
       });
       this.socket.on("position", this.onPosition);
@@ -69,12 +68,18 @@
       return $("#position").text("Waiting for position..");
     };
 
-    Ui.prototype.onPosition = function(position) {
+    Ui.prototype.onPosition = function(position, name) {
+      if (name !== this.name) {
+        return;
+      }
       $("#position").html("Latitude: " + position.latitude + "<br/>\nLongitude: " + position.longitude);
       return this.map.setPosition(position.latitude, position.longitude);
     };
 
-    Ui.prototype.onClear = function() {
+    Ui.prototype.onClear = function(name) {
+      if (name !== this.name) {
+        return;
+      }
       return this.map.clearPosition();
     };
 
@@ -83,7 +88,8 @@
   })();
 
   Tracking = (function() {
-    function Tracking() {
+    function Tracking(ui) {
+      this.ui = ui;
       this.onResume = __bind(this.onResume, this);
       this.onPause = __bind(this.onPause, this);
       this.onFailure = __bind(this.onFailure, this);
@@ -114,6 +120,9 @@
       };
       return this.bgGeo.configure(this.onPosition, this.onFailure, {
         url: this.reportUrl,
+        params: {
+          name: this.name
+        },
         desiredAccuracy: 0,
         stationaryRadius: 20,
         distanceFilter: 30
@@ -124,8 +133,7 @@
       return window.navigator.geolocation.getCurrentPosition(this.onPosition, this.onFailure);
     };
 
-    Tracking.prototype.startForegroundTracker = function(name) {
-      this.name = name;
+    Tracking.prototype.startForegroundTracker = function() {
       this.getCurrentPosition();
       return this.foregroundTracker = setInterval(this.getCurrentPosition, this.pollingInterval);
     };
@@ -140,10 +148,13 @@
       var _this = this;
       $("#start").removeAttr("disabled");
       return $("#start").click(function() {
-        var name;
-        name = $("#name").val();
+        if (_this.name == null) {
+          _this.name = $("#name").val();
+          _this.ui.name = _this.name;
+          _this.configure();
+        }
         if ($("#start").hasClass("btn-success")) {
-          _this.startForegroundTracker(name);
+          _this.startForegroundTracker();
           $("#name").prop("disabled", true);
           return $("#start").removeClass("btn-success").addClass("btn-danger").text("Stop Tracking");
         } else {
@@ -151,7 +162,6 @@
             name: _this.name
           }, null, "json");
           _this.stopForegroundTracker();
-          $("#name").prop("disabled", false);
           $("#position").text("Waiting for position..");
           return $("#start").removeClass("btn-danger").addClass("btn-success").text("Start Tracking");
         }
@@ -159,7 +169,6 @@
     };
 
     Tracking.prototype.start = function() {
-      this.configure();
       return this.setupUi();
     };
 
@@ -202,7 +211,7 @@
 
     Tracker.prototype.onReady = function() {
       this.ui = new Ui;
-      this.tracking = new Tracking;
+      this.tracking = new Tracking(this.ui);
       this.ui.start();
       return this.tracking.start();
     };

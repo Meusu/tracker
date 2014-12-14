@@ -50,7 +50,9 @@ class Ui
 
     $("#position").text "Waiting for position.."
 
-  onPosition: (position) =>
+  onPosition: (position, name) =>
+    return unless name == @name
+
     $("#position").html """
       Latitude: #{position.latitude}<br/>
       Longitude: #{position.longitude}
@@ -58,11 +60,13 @@ class Ui
 
     @map.setPosition position.latitude, position.longitude
 
-  onClear: =>
+  onClear: (name) =>
+    return unless name == @name
+
     @map.clearPosition()
 
 class Tracking
-  constructor: ->
+  constructor: (@ui) ->
     @reportUrl = "#{serverHost}/report"
     @clearUrl  = "#{serverHost}/clear"
 
@@ -103,8 +107,11 @@ class Tracking
     $("#start").removeAttr "disabled"
 
     $("#start").click =>
-      @name = $("#name").val()
-      @configure()
+      unless @name?
+        @name = $("#name").val()
+        @ui.name = @name
+        @configure()
+
       if $("#start").hasClass "btn-success"
         @startForegroundTracker()
         $("#name").prop "disabled", true
@@ -142,7 +149,7 @@ class window.Tracker
 
   onReady: =>
     @ui       = new Ui
-    @tracking = new Tracking
+    @tracking = new Tracking @ui
 
     @ui.start()
     @tracking.start()
