@@ -43,8 +43,7 @@ class Ui
   start: ->
     @map = new Map
     @socket = io.connect serverHost,
-      transports: ["xhr-polling"]
-      port:       serverPort
+      port: serverPort
 
     @socket.on "position", @onPosition
     @socket.on "clear", @onClear
@@ -52,7 +51,6 @@ class Ui
     $("#position").text "Waiting for position.."
 
   onPosition: (position, name) =>
-    $("#position").text "DEBUG. Got #{@name}, #{name}, #{position}"
     return unless name == @name
 
     $("#position").html """
