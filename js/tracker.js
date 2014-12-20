@@ -19,10 +19,6 @@
         center: center,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       });
-      this.route = new google.maps.KmlLayer({
-        url: "http://mapsengine.google.com/map/u/0/kml?mid=zaIRRFV8XaRQ.k2GoQJ3ppZFs"
-      });
-      this.route.setMap(this.map);
     }
 
     Map.prototype.setPosition = function(lat, lng) {

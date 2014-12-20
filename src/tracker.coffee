@@ -15,10 +15,6 @@ class Map
       center:           center
       mapTypeId:        google.maps.MapTypeId.ROADMAP
 
-    @route = new google.maps.KmlLayer
-      url: "http://mapsengine.google.com/map/u/0/kml?mid=zaIRRFV8XaRQ.k2GoQJ3ppZFs"
-    @route.setMap @map
-
   setPosition: (lat, lng) ->
     if @marker?
       @marker.setMap null
